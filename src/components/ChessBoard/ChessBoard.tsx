@@ -11,15 +11,22 @@ const ChessBoard = ({ chessBoard }: ChessBoardProps) => {
       {chessBoard.map((row, rowIndex) =>
         row.map((tile, tileIndex) => (
           <Tile
-            color={(tileIndex + rowIndex) % 2 === 0 ? 'black' : 'white'}
+            color={(tileIndex + rowIndex) % 2 !== 0 ? 'black' : 'white'}
             position={{ x: rowIndex, z: tileIndex }}
           />
         ))
       )}
-      {/* <mesh receiveShadow position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color={'red'} />
-      </mesh> */}
+      {chessBoard.map((row, rowIndex) =>
+        row.map(
+          (tile, tileIndex) =>
+            tile && (
+              <mesh position={[tileIndex - 4, (0.5 * tile) / 5, rowIndex - 4]}>
+                <boxGeometry args={[0.6, tile / 5, 0.6]} />
+                <meshStandardMaterial />
+              </mesh>
+            )
+        )
+      )}
     </>
   );
 };

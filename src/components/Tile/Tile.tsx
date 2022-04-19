@@ -9,7 +9,7 @@ const Tile = ({ color, position }: TileProps) => {
   return (
     <mesh
       receiveShadow
-      position={[position.x, -0.05, position.z - 4]}
+      position={[position.x - 4, -0.05, position.z - 4]}
       rotation={[-PI / 2, 0, 0]}
     >
       <boxGeometry args={[1, 1, 0.1]} />
