@@ -1,9 +1,12 @@
+import { position } from '../../types';
+
 interface TileProps {
   color: string;
-  position: { x: number; z: number };
+  position: position;
+  isPossiblePosition: boolean;
 }
 
-const Tile = ({ color, position }: TileProps) => {
+const Tile = ({ color, position, isPossiblePosition }: TileProps) => {
   const { PI } = Math;
 
   return (
@@ -13,7 +16,7 @@ const Tile = ({ color, position }: TileProps) => {
       rotation={[-PI / 2, 0, 0]}
     >
       <boxGeometry args={[1, 1, 0.1]} />
-      <meshStandardMaterial color={color} />
+      <meshStandardMaterial color={isPossiblePosition ? 'green' : color} />
     </mesh>
   );
 };

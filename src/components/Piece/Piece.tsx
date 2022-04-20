@@ -1,20 +1,27 @@
 import { useSelect } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
+import { position, SelectedPiece } from '../../types';
 
 interface PieceProps {
-  position: { x: number; z: number };
+  position: position;
   pieceId: number;
+  setSelectedPiece: React.Dispatch<React.SetStateAction<SelectedPiece>>;
 }
 
-const Piece = ({ position, pieceId }: PieceProps) => {
+const Piece = ({ position, pieceId, setSelectedPiece }: PieceProps) => {
   const selected = useSelect();
   const [uuid, setUuid] = useState('');
 
-  const handleClick = (e: ThreeEvent<MouseEvent>) => setUuid(e.eventObject.uuid);
+  const handleClick = (e: ThreeEvent<MouseEvent>) => {
+    setUuid(e.eventObject.uuid);
+    setSelectedPiece({ uuid: e.eventObject.uuid, pieceId, position });
+  };
 
   useEffect(() => {
     selected[0]?.uuid !== uuid && setUuid('');
+    !selected[0] &&
+      setSelectedPiece({ uuid: '', pieceId: 0, position: { x: -1, z: -1 } });
   }, [selected]);
 
   return (
