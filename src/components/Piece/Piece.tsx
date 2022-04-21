@@ -1,40 +1,47 @@
 import { useSelect } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { position, SelectedPiece } from '../../types';
 
 interface PieceProps {
   position: position;
-  pieceId: number;
+  id: number;
+  enemy: boolean;
+  moved: boolean;
   setSelectedPiece: React.Dispatch<React.SetStateAction<SelectedPiece>>;
 }
 
-const Piece = ({ position, pieceId, setSelectedPiece }: PieceProps) => {
-  const selected = useSelect();
+const Piece = ({ position, id, enemy, moved, setSelectedPiece }: PieceProps) => {
   const [uuid, setUuid] = useState('');
+  const selected = useSelect();
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     setUuid(e.eventObject.uuid);
-    setSelectedPiece({ uuid: e.eventObject.uuid, pieceId, position });
+    setSelectedPiece({ uuid: e.eventObject.uuid, id, position, moved });
+  };
+
+  const setColour = () => {
+    if (enemy) return 'black';
+    else return uuid.length && uuid === selected[0]?.uuid ? 'red' : 'white';
   };
 
   useEffect(() => {
     selected[0]?.uuid !== uuid && setUuid('');
     !selected[0] &&
-      setSelectedPiece({ uuid: '', pieceId: 0, position: { x: -1, z: -1 } });
+      setSelectedPiece({ uuid: '', id: 0, position: { x: -1, z: -1 }, moved });
   }, [selected]);
 
   return (
     <mesh
-      onClick={handleClick}
-      position={[position.x - 4, (0.5 * pieceId) / 5, position.z - 4]}
+      castShadow
+      receiveShadow
+      onClick={!enemy ? handleClick : undefined}
+      position={[position.x - 4, (0.5 * id) / 5, position.z - 4]}
     >
-      <boxGeometry args={[0.6, pieceId / 5, 0.6]} />
-      <meshStandardMaterial
-        color={uuid.length && uuid === selected[0]?.uuid ? 'red' : 'white'}
-      />
+      <boxGeometry args={[0.6, id / 5, 0.6]} />
+      <meshStandardMaterial color={setColour()} />
     </mesh>
   );
 };
 
-export default Piece;
+export default memo(Piece);

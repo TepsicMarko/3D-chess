@@ -1,24 +1,42 @@
-import { Select } from '@react-three/drei';
+import { OrbitControls, Select } from '@react-three/drei';
 import { useEffect, useState } from 'react';
-import { chessBoard, SelectedPiece } from '../../types';
+import { position, SelectedPiece } from '../../types';
 import Piece from '../Piece';
 import Tile from '../Tile';
-import moves from '../../moves';
+import moves from '../../game-conf/moves';
+import newGame from '../../game-conf/newGame';
 
-interface ChessBoardProps {
-  chessBoard: chessBoard;
-}
-
-const ChessBoard = ({ chessBoard }: ChessBoardProps) => {
+const ChessBoard = () => {
+  const [chessBoard, setChessBoard] = useState(newGame);
   const [selectedPiece, setSelectedPiece] = useState<SelectedPiece>({
     uuid: '',
-    pieceId: 0,
+    id: 0,
     position: { x: -1, z: -1 },
+    moved: false,
   });
   const [possibleMoves, setPossibleMoves] = useState<number[][]>([]);
 
+  const movePiece = (newPosition: position) => {
+    const currentPosition = selectedPiece.position;
+    const newChessBoard = [...chessBoard];
+    newChessBoard[newPosition.z][newPosition.x] = {
+      id: selectedPiece.id,
+      enemy: newChessBoard[currentPosition.z][currentPosition.x]?.enemy || false,
+      moved: true,
+    };
+    newChessBoard[currentPosition.z][currentPosition.x] = null;
+
+    setChessBoard(newChessBoard);
+    setSelectedPiece({
+      uuid: '',
+      id: 0,
+      position: { x: -1, z: -1 },
+      moved: false,
+    });
+  };
+
   useEffect(() => {
-    const pieceMoves = moves[selectedPiece.pieceId];
+    const pieceMoves = moves[selectedPiece.id];
     const operations = ['-0', '-+', '0+', '++', '+0', '+-', '0-', '--'];
 
     if (pieceMoves) {
@@ -54,7 +72,8 @@ const ChessBoard = ({ chessBoard }: ChessBoardProps) => {
                   selectedPiece.position.z +
                   (forZ === '0' ? 0 : forZ === '+' ? -move : move);
 
-                return [[x, z]];
+                if (selectedPiece.id === 1 && !selectedPiece.moved) return [[x, z - 1]];
+                else return [[x, z]];
               }
             } else {
               return move.map((m, i) => {
@@ -83,12 +102,14 @@ const ChessBoard = ({ chessBoard }: ChessBoardProps) => {
 
   return (
     <>
+      <OrbitControls />
       {chessBoard.map((row, rowIndex) =>
         row.map((tile, tileIndex) => (
           <Tile
             key={`${tileIndex}-${rowIndex}`}
             color={(tileIndex + rowIndex) % 2 !== 0 ? 'black' : 'white'}
             position={{ x: rowIndex, z: tileIndex }}
+            movePiece={movePiece}
             isPossiblePosition={possibleMoves.some(
               ([x, y]) => x === rowIndex && y === tileIndex
             )}
@@ -97,14 +118,14 @@ const ChessBoard = ({ chessBoard }: ChessBoardProps) => {
       )}
 
       <Select>
-        {chessBoard.map((row, rowIndex) =>
+        {newGame.map((row, rowIndex) =>
           row.map(
-            (tile, tileIndex) =>
-              tile && (
+            (piece, tileIndex) =>
+              piece && (
                 <Piece
+                  {...piece}
                   key={`${tileIndex}-${rowIndex}`}
                   position={{ x: tileIndex, z: rowIndex }}
-                  pieceId={tile}
                   setSelectedPiece={setSelectedPiece}
                 />
               )
