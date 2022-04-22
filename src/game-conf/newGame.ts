@@ -4,7 +4,7 @@ interface rowState {
   moved: boolean;
 }
 
-const newGame: (rowState | null | undefined)[][] = [
+const newGame: (rowState | null)[][] = [
   [
     { id: 2, enemy: true, moved: false },
     { id: 3, enemy: true, moved: false },

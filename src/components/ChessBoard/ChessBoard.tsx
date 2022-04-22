@@ -50,17 +50,19 @@ const ChessBoard = () => {
                 let possibleMoves = [];
                 let x = 0,
                   z = 0,
-                  i = 0;
+                  n = 0;
                 while (x <= 7 && x >= 0 && z <= 7 && z >= 0) {
-                  i++;
+                  n++;
                   x =
-                    selectedPiece.position.x +
-                    (forX === '0' ? 0 : forX === '+' ? -move - i : move + i);
+                    selectedPiece.position.x + (forX === '0' ? 0 : forX === '+' ? -n : n);
                   z =
-                    selectedPiece.position.z +
-                    (forZ === '0' ? 0 : forZ === '+' ? -move - i : move + i);
+                    selectedPiece.position.z + (forZ === '0' ? 0 : forZ === '+' ? -n : n);
 
-                  possibleMoves.push([x, z]);
+                  if (x >= 0 && z >= 0 && x <= 7 && z <= 7) {
+                    if (chessBoard[z][x] === null || chessBoard[z][x]?.enemy)
+                      possibleMoves.push([x, z]);
+                    if (chessBoard[z][x]) break;
+                  }
                 }
 
                 return possibleMoves;
@@ -72,8 +74,16 @@ const ChessBoard = () => {
                   selectedPiece.position.z +
                   (forZ === '0' ? 0 : forZ === '+' ? -move : move);
 
-                if (selectedPiece.id === 1 && !selectedPiece.moved) return [[x, z - 1]];
-                else return [[x, z]];
+                console.log(x, z);
+                if (x >= 0 && x <= 7 && z >= 0 && z <= 7) {
+                  if (chessBoard[z][x] === null || chessBoard[z][x]?.enemy)
+                    if (selectedPiece.id === 1 && !selectedPiece.moved)
+                      return [[x, z - 1]];
+                    else return [[x, z]];
+                }
+                {
+                  return [[]];
+                }
               }
             } else {
               return move.map((m, i) => {
@@ -89,7 +99,11 @@ const ChessBoard = () => {
                   x = selectedPiece.position.x + (i === 0 ? -1 : 1);
                 }
 
-                return [x, z];
+                if (x >= 0 && x <= 7 && z >= 0 && z <= 7) {
+                  if (chessBoard[z][x] === null || chessBoard[z][x]?.enemy) {
+                    return [x, z];
+                  } else return [];
+                } else return [];
               });
             }
           } else return null;
