@@ -1,7 +1,11 @@
-import { useSelect } from '@react-three/drei';
+import { useGLTF, useSelect } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { position, SelectedPiece } from '../../types';
+
+interface models {
+  [key: number]: { name: string; size: number };
+}
 
 interface PieceProps {
   position: position;
@@ -11,9 +15,19 @@ interface PieceProps {
   setSelectedPiece: React.Dispatch<React.SetStateAction<SelectedPiece>>;
 }
 
-const Piece = ({ position, id, enemy, moved, setSelectedPiece }: PieceProps) => {
+const models: models = {
+  1: { name: 'PrimaryWhitePawn007', size: 1 },
+  2: { name: 'Rook001', size: 1.5 },
+  3: { name: 'WhiteKnight001', size: 1.5 },
+  4: { name: 'PrimaryWhiteBishop001', size: 0.25 },
+  5: { name: 'WhiteKing', size: 1 },
+  6: { name: 'WhiteQueen', size: 0.25 },
+};
+
+const Piece = ({ position, id, enemy, moved, setSelectedPiece }: PieceProps): any => {
   const [uuid, setUuid] = useState('');
   const selected = useSelect();
+  const { nodes }: any = useGLTF(`/models/${id}.gltf`);
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     setUuid(e.eventObject.uuid);
@@ -32,15 +46,18 @@ const Piece = ({ position, id, enemy, moved, setSelectedPiece }: PieceProps) => 
   }, [selected]);
 
   return (
-    <mesh
-      castShadow
-      receiveShadow
-      onClick={!enemy ? handleClick : undefined}
-      position={[position.x - 4, (0.5 * id) / 5, position.z - 4]}
-    >
-      <boxGeometry args={[0.6, id / 5, 0.6]} />
-      <meshStandardMaterial color={setColour()} />
-    </mesh>
+    <>
+      <mesh
+        receiveShadow
+        castShadow
+        onClick={handleClick}
+        geometry={nodes[models[id].name].geometry}
+        position={[position.x - 4, 0, position.z - 4]}
+        scale={0.15 * models[id].size}
+      >
+        <meshStandardMaterial attach='material' color={setColour()} />
+      </mesh>
+    </>
   );
 };
 
