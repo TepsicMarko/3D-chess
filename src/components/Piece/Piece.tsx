@@ -36,7 +36,7 @@ const Piece = ({ position, id, enemy, moved, setSelectedPiece }: PieceProps): an
 
   const setColour = () => {
     if (enemy) return 'black';
-    else return uuid.length && uuid === selected[0]?.uuid ? 'red' : 'white';
+    else return uuid.length && uuid === selected[0]?.uuid ? 'turquoise' : 'white';
   };
 
   useEffect(() => {
