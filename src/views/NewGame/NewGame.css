@@ -1,26 +1,3 @@
-.new-game-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100vh;
-}
-
-.new-game {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 20rem;
-  color: #fff;
-}
-
-.new-game h1 {
-  font-size: 2.25rem;
-  margin-bottom: 2rem;
-  margin-top: 0;
-}
-
 .color-picker {
   display: flex;
   width: 100%;
@@ -49,57 +26,4 @@
 
 .color-preview {
   width: 6rem;
-}
-
-.username {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  font-weight: bold;
-}
-
-.username > input {
-  flex-basis: 100%;
-  border: none;
-  border-radius: 0.5rem;
-  padding: 0 0.5rem;
-  height: 2.5rem;
-  margin-top: 0.75rem;
-}
-
-.username > input:focus {
-  outline: none;
-}
-
-.new-game button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  border: none;
-  border-radius: 0.5rem;
-  height: 3rem;
-  margin-top: 3rem;
-  background-color: #007ea7;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  text-transform: capitalize;
-}
-
-.new-game button:last-child {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  border: none;
-  border-radius: 0.5rem;
-  height: 3rem;
-  margin-top: 1rem;
-  background-color: transparent;
-  border: 1px solid #007ea7;
-  color: #007ea7;
-  font-size: 1rem;
-  font-weight: bold;
-  text-transform: capitalize;
 }

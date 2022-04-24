@@ -1,15 +1,10 @@
-import { useGLTF } from '@react-three/drei';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useLayoutEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { BufferGeometry, Material, Mesh } from 'three';
 import './NewGame.css';
-
-type pieceRef = null | React.Ref<Mesh<BufferGeometry, Material | Material[]>>;
-
-const randomUsername = () => {
-  return 'Anonymous' + Math.floor(Math.random() * 100) + 1;
-};
+import '../styles/form.css';
+import { useGLTF } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { useLayoutEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import randomUsername from '../../helpers/randomUsername';
 
 const NewGame = () => {
   const [color, setColor] = useState('white');
@@ -40,9 +35,10 @@ const NewGame = () => {
   }, []);
 
   return (
-    <main className='new-game-container' onSubmit={handleSubmit}>
-      <form className='new-game'>
-        <h1>Create New Game</h1>
+    <main className='view-form-container' onSubmit={handleSubmit}>
+      <h1>Create New Game</h1>
+
+      <form className='view-form'>
         <div className='color-picker'>
           <div className='color-options'>
             <div
