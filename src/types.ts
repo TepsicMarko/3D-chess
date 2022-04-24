@@ -1,4 +1,3 @@
-export type chessBoard = number[][];
 export type position = { x: number; z: number };
 export interface SelectedPiece {
   uuid: string;
@@ -6,3 +5,9 @@ export interface SelectedPiece {
   position: position;
   moved: boolean;
 }
+interface rowState {
+  id: number;
+  enemy: boolean;
+  moved: boolean;
+}
+export type chessBoard = (rowState | null)[][];

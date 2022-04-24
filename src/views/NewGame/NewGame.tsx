@@ -2,11 +2,13 @@ import './NewGame.css';
 import '../styles/form.css';
 import { useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { useLayoutEffect, useState } from 'react';
+import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import randomUsername from '../../helpers/randomUsername';
+import { SocketContext } from '../../contexts/SocketContext';
 
 const NewGame = () => {
+  const socket = useContext(SocketContext);
   const [color, setColor] = useState('white');
   const [username, setUsername] = useState(randomUsername);
   const [rotation, setRotation] = useState(0);
@@ -16,6 +18,7 @@ const NewGame = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(username, color);
+    socket?.connect().emit('create game', { username, color });
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -33,6 +36,13 @@ const NewGame = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    socket?.once('game created', (data) => {
+      console.log(data);
+      navigate('/game/' + data.id, { state: data.game });
+    });
+  }, [socket]);
 
   return (
     <main className='view-form-container' onSubmit={handleSubmit}>

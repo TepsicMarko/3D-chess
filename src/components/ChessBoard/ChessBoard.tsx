@@ -1,12 +1,17 @@
 import { OrbitControls, Select } from '@react-three/drei';
 import { useEffect, useState } from 'react';
-import { position, SelectedPiece } from '../../types';
+import { chessBoard, position, SelectedPiece } from '../../types';
 import Piece from '../Piece';
 import Tile from '../Tile';
 import moves from '../../game-conf/moves';
-import newGame from '../../game-conf/newGame';
+import { useParams } from 'react-router-dom';
 
-const ChessBoard = () => {
+interface ChessBoardProps {
+  newGame: chessBoard;
+}
+
+const ChessBoard = ({ newGame }: ChessBoardProps) => {
+  const { gameId } = useParams();
   const [chessBoard, setChessBoard] = useState(newGame);
   const [selectedPiece, setSelectedPiece] = useState<SelectedPiece>({
     uuid: '',
@@ -132,7 +137,7 @@ const ChessBoard = () => {
       )}
 
       <Select>
-        {newGame.map((row, rowIndex) =>
+        {chessBoard.map((row, rowIndex) =>
           row.map(
             (piece, tileIndex) =>
               piece && (

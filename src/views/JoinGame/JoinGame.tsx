@@ -1,11 +1,14 @@
 import '../styles/form.css';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import randomUsername from '../../helpers/randomUsername';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { SocketContext } from '../../contexts/SocketContext';
 
 const JoinGame = () => {
-  const [form, setForm] = useState({ username: randomUsername(), game: '' });
+  const { gameId } = useParams();
+  const [form, setForm] = useState({ username: randomUsername(), game: gameId || '' });
   const navigate = useNavigate();
+  const socket = useContext(SocketContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -14,12 +17,20 @@ const JoinGame = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(form);
+    socket?.connect().emit('join game', form);
   };
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     navigate('/game/new');
   };
+
+  useEffect(() => {
+    socket?.once('game joined', (data) => {
+      console.log(data);
+      navigate('/game/' + data.id, { state: data.game });
+    });
+  }, [socket]);
 
   return (
     <main className='view-form-container'>
