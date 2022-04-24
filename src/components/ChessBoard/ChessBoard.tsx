@@ -1,17 +1,18 @@
 import { OrbitControls, Select } from '@react-three/drei';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { chessBoard, position, SelectedPiece } from '../../types';
 import Piece from '../Piece';
 import Tile from '../Tile';
 import moves from '../../game-conf/moves';
-import { useParams } from 'react-router-dom';
+import { SocketContext } from '../../contexts/SocketContext';
 
 interface ChessBoardProps {
   newGame: chessBoard;
+  gameId: string;
 }
 
-const ChessBoard = ({ newGame }: ChessBoardProps) => {
-  const { gameId } = useParams();
+const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
+  const socket = useContext(SocketContext);
   const [chessBoard, setChessBoard] = useState(newGame);
   const [selectedPiece, setSelectedPiece] = useState<SelectedPiece>({
     uuid: '',
@@ -22,16 +23,7 @@ const ChessBoard = ({ newGame }: ChessBoardProps) => {
   const [possibleMoves, setPossibleMoves] = useState<number[][]>([]);
 
   const movePiece = (newPosition: position) => {
-    const currentPosition = selectedPiece.position;
-    const newChessBoard = [...chessBoard];
-    newChessBoard[newPosition.z][newPosition.x] = {
-      id: selectedPiece.id,
-      enemy: newChessBoard[currentPosition.z][currentPosition.x]?.enemy || false,
-      moved: true,
-    };
-    newChessBoard[currentPosition.z][currentPosition.x] = null;
-
-    setChessBoard(newChessBoard);
+    socket?.emit('move piece', { id: gameId, selectedPiece, newPosition });
     setSelectedPiece({
       uuid: '',
       id: 0,
@@ -118,6 +110,12 @@ const ChessBoard = ({ newGame }: ChessBoardProps) => {
       setPossibleMoves(possibleMoves);
     } else setPossibleMoves([]);
   }, [selectedPiece]);
+
+  useEffect(() => {
+    socket?.on('piece moved', (data) => {
+      setChessBoard(data.game);
+    });
+  }, []);
 
   return (
     <>

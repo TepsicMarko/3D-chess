@@ -6,7 +6,7 @@ import { SocketContext } from '../../contexts/SocketContext';
 
 const JoinGame = () => {
   const { gameId } = useParams();
-  const [form, setForm] = useState({ username: randomUsername(), game: gameId || '' });
+  const [form, setForm] = useState({ username: randomUsername(), gameId: gameId || '' });
   const navigate = useNavigate();
   const socket = useContext(SocketContext);
 
@@ -17,7 +17,7 @@ const JoinGame = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(form);
-    socket?.connect().emit('join game', form);
+    socket?.connect().emit('join game', { ...form, id: gameId || form.gameId });
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -49,9 +49,9 @@ const JoinGame = () => {
           Game
           <input
             type='text'
-            name='game'
+            name='gameId'
             placeholder='Game id or url'
-            value={form.game}
+            value={form.gameId}
             onChange={handleChange}
           />
         </label>
