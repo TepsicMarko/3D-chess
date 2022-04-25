@@ -7,7 +7,8 @@ export interface SelectedPiece {
 }
 interface rowState {
   id: number;
-  enemy: boolean;
+  owner: string;
   moved: boolean;
+  color: string;
 }
 export type chessBoard = (rowState | null)[][];

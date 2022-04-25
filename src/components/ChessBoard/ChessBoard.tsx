@@ -5,15 +5,20 @@ import Piece from '../Piece';
 import Tile from '../Tile';
 import moves from '../../game-conf/moves';
 import { SocketContext } from '../../contexts/SocketContext';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 interface ChessBoardProps {
-  newGame: chessBoard;
+  newGame: { state: chessBoard; owner: string };
   gameId: string;
 }
 
 const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
   const socket = useContext(SocketContext);
-  const [chessBoard, setChessBoard] = useState(newGame);
+  const { user } = useContext(CurrentUserContext);
+  const [gameOwner] = useState(newGame.owner);
+  const [chessBoard, setChessBoard] = useState(() =>
+    gameOwner === user ? newGame.state.reverse().map((el) => el.reverse()) : newGame.state
+  );
   const [selectedPiece, setSelectedPiece] = useState<SelectedPiece>({
     uuid: '',
     id: 0,
@@ -23,7 +28,23 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
   const [possibleMoves, setPossibleMoves] = useState<number[][]>([]);
 
   const movePiece = (newPosition: position) => {
-    socket?.emit('move piece', { id: gameId, selectedPiece, newPosition });
+    socket?.emit('move piece', {
+      id: gameId,
+      selectedPiece:
+        gameOwner === user
+          ? {
+              ...selectedPiece,
+              position: {
+                x: -selectedPiece.position.x + 7,
+                z: -selectedPiece.position.z + 7,
+              },
+            }
+          : selectedPiece,
+      newPosition:
+        gameOwner === user
+          ? { x: -newPosition.x + 7, z: -newPosition.z + 7 }
+          : newPosition,
+    });
     setSelectedPiece({
       uuid: '',
       id: 0,
@@ -56,7 +77,7 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
                     selectedPiece.position.z + (forZ === '0' ? 0 : forZ === '+' ? -n : n);
 
                   if (x >= 0 && z >= 0 && x <= 7 && z <= 7) {
-                    if (chessBoard[z][x] === null || chessBoard[z][x]?.enemy)
+                    if (chessBoard[z][x] === null || chessBoard[z][x]?.owner !== user)
                       possibleMoves.push([x, z]);
                     if (chessBoard[z][x]) break;
                   }
@@ -73,7 +94,7 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
 
                 console.log(x, z);
                 if (x >= 0 && x <= 7 && z >= 0 && z <= 7) {
-                  if (chessBoard[z][x] === null || chessBoard[z][x]?.enemy)
+                  if (chessBoard[z][x] === null || chessBoard[z][x]?.owner !== user)
                     if (selectedPiece.id === 1 && !selectedPiece.moved)
                       return [[x, z - 1]];
                     else return [[x, z]];
@@ -89,7 +110,7 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
 
                 if (forZ === '0') {
                   x = selectedPiece.position.x + (forX === '+' ? -move[0] : move[0]);
-                  z = selectedPiece.position.z + (i === 0 ? -1 : 1);
+                  z = selectedPiece.position.z + (i === 0 ? 1 : -1);
                 }
                 if (forX === '0') {
                   z = selectedPiece.position.z + (forZ === '+' ? -move[0] : move[0]);
@@ -97,7 +118,7 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
                 }
 
                 if (x >= 0 && x <= 7 && z >= 0 && z <= 7) {
-                  if (chessBoard[z][x] === null || chessBoard[z][x]?.enemy) {
+                  if (chessBoard[z][x] === null || chessBoard[z][x]?.owner !== user) {
                     return [x, z];
                   } else return [];
                 } else return [];
@@ -112,10 +133,12 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
   }, [selectedPiece]);
 
   useEffect(() => {
-    socket?.on('piece moved', (data) => {
-      setChessBoard(data.game);
+    socket?.on('piece moved', (game: { state: chessBoard; owner: string }) => {
+      setChessBoard(
+        game.owner === user ? game.state.reverse().map((el) => el.reverse()) : game.state
+      );
     });
-  }, []);
+  }, [user]);
 
   return (
     <>
@@ -141,6 +164,7 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
               piece && (
                 <Piece
                   {...piece}
+                  enemy={piece.owner !== user}
                   key={`${tileIndex}-${rowIndex}`}
                   position={{ x: tileIndex, z: rowIndex }}
                   setSelectedPiece={setSelectedPiece}

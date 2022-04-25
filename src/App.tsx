@@ -5,11 +5,14 @@ import { useLocation, useParams } from 'react-router-dom';
 import { chessBoard } from './types';
 import { SocketContext } from './contexts/SocketContext';
 import { useContextBridge } from '@react-three/drei';
+import { CurrentUserContext } from './contexts/CurrentUserContext';
 
 const App = () => {
-  const { state } = useLocation() as { state: chessBoard };
+  const { state: game } = useLocation() as {
+    state: { state: chessBoard; owner: string };
+  };
   const { gameId } = useParams();
-  const ContextBridge = useContextBridge(SocketContext);
+  const ContextBridge = useContextBridge(SocketContext, CurrentUserContext);
 
   return (
     <div className='App'>
@@ -18,7 +21,7 @@ const App = () => {
         <spotLight castShadow color='white' position={[60, 40, 40]} angle={0.1} />
 
         <ContextBridge>
-          <ChessBoard newGame={state} gameId={gameId || ''} />
+          <ChessBoard newGame={game} gameId={gameId || ''} />
         </ContextBridge>
         {/* 
         <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>

@@ -6,9 +6,11 @@ import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import randomUsername from '../../helpers/randomUsername';
 import { SocketContext } from '../../contexts/SocketContext';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 const NewGame = () => {
   const socket = useContext(SocketContext);
+  const { setUser } = useContext(CurrentUserContext);
   const [color, setColor] = useState('white');
   const [username, setUsername] = useState(randomUsername);
   const [rotation, setRotation] = useState(0);
@@ -19,6 +21,7 @@ const NewGame = () => {
     e.preventDefault();
     console.log(username, color);
     socket?.connect().emit('create game', { username, color });
+    setUser(username);
   };
 
   const handleClick = (e: React.MouseEvent) => {
