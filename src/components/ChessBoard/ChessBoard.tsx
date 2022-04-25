@@ -1,6 +1,6 @@
 import { OrbitControls, Select } from '@react-three/drei';
 import { useContext, useEffect, useState } from 'react';
-import { chessBoard, position, SelectedPiece } from '../../types';
+import { chessBoard, chessGame, position, SelectedPiece } from '../../types';
 import Piece from '../Piece';
 import Tile from '../Tile';
 import moves from '../../game-conf/moves';
@@ -8,7 +8,7 @@ import { SocketContext } from '../../contexts/SocketContext';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 interface ChessBoardProps {
-  newGame: { state: chessBoard; owner: string };
+  newGame: chessGame;
   gameId: string;
 }
 
@@ -16,6 +16,7 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
   const socket = useContext(SocketContext);
   const { user } = useContext(CurrentUserContext);
   const [gameOwner] = useState(newGame.owner);
+  const [nextTurn, setNextTurn] = useState(newGame.nextTurn);
   const [chessBoard, setChessBoard] = useState(() =>
     gameOwner === user ? newGame.state.reverse().map((el) => el.reverse()) : newGame.state
   );
@@ -133,10 +134,11 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
   }, [selectedPiece]);
 
   useEffect(() => {
-    socket?.on('piece moved', (game: { state: chessBoard; owner: string }) => {
+    socket?.on('piece moved', (game: chessGame) => {
       setChessBoard(
         game.owner === user ? game.state.reverse().map((el) => el.reverse()) : game.state
       );
+      setNextTurn(game.nextTurn);
     });
   }, [user]);
 
@@ -164,7 +166,7 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
               piece && (
                 <Piece
                   {...piece}
-                  enemy={piece.owner !== user}
+                  disabled={piece.owner !== user || nextTurn !== user}
                   key={`${tileIndex}-${rowIndex}`}
                   position={{ x: tileIndex, z: rowIndex }}
                   setSelectedPiece={setSelectedPiece}

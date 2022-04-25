@@ -12,3 +12,9 @@ interface rowState {
   color: string;
 }
 export type chessBoard = (rowState | null)[][];
+export interface chessGame {
+  state: chessBoard;
+  owner: string;
+  guest: string;
+  nextTurn: string;
+}

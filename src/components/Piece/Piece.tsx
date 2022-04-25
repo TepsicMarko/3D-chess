@@ -11,7 +11,7 @@ interface PieceProps {
   position: position;
   id: number;
   moved: boolean;
-  enemy: boolean;
+  disabled: boolean;
   color: string;
   setSelectedPiece: React.Dispatch<React.SetStateAction<SelectedPiece>>;
 }
@@ -29,7 +29,7 @@ const Piece = ({
   position,
   id,
   color,
-  enemy,
+  disabled,
   moved,
   setSelectedPiece,
 }: PieceProps): any => {
@@ -56,7 +56,7 @@ const Piece = ({
       <mesh
         receiveShadow
         castShadow
-        onClick={!enemy ? handleClick : undefined}
+        onClick={!disabled ? handleClick : undefined}
         geometry={nodes[models[id].name].geometry}
         position={[position.x - 4, 0, position.z - 4]}
         scale={0.15 * models[id].size}

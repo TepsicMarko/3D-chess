@@ -2,14 +2,14 @@ import './App.css';
 import { Canvas } from '@react-three/fiber';
 import ChessBoard from './components/ChessBoard';
 import { useLocation, useParams } from 'react-router-dom';
-import { chessBoard } from './types';
+import { chessBoard, chessGame } from './types';
 import { SocketContext } from './contexts/SocketContext';
 import { useContextBridge } from '@react-three/drei';
 import { CurrentUserContext } from './contexts/CurrentUserContext';
 
 const App = () => {
   const { state: game } = useLocation() as {
-    state: { state: chessBoard; owner: string };
+    state: chessGame;
   };
   const { gameId } = useParams();
   const ContextBridge = useContextBridge(SocketContext, CurrentUserContext);
