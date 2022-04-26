@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { position } from '../../types';
 
 interface TileProps {
@@ -8,22 +9,39 @@ interface TileProps {
 }
 
 const Tile = ({ color, position, isPossiblePosition, movePiece }: TileProps) => {
+  const [isMouseOver, setIsMouseOver] = useState(false);
   const { PI } = Math;
 
   const handleClick = () => isPossiblePosition && movePiece(position);
 
   return (
-    <mesh
-      onClick={handleClick}
-      receiveShadow
-      position={[position.x - 4, -0.05, position.z - 4]}
-      rotation={[-PI / 2, 0, 0]}
-    >
-      <boxGeometry args={[1, 1, 0.1]} />
-      <meshStandardMaterial
-        color={isPossiblePosition ? 'rgba(57, 175, 57, 0.5)' : color}
-      />
-    </mesh>
+    <>
+      <mesh
+        receiveShadow
+        position={[position.x - 4, -0.05, position.z - 4]}
+        rotation={[-PI / 2, 0, 0]}
+      >
+        <boxGeometry args={[1, 1, 0.1]} />
+        <meshStandardMaterial color={color} />
+      </mesh>
+      {isPossiblePosition && (
+        <mesh
+          onClick={handleClick}
+          onPointerOver={() => setIsMouseOver(true)}
+          onPointerOut={() => setIsMouseOver(false)}
+          receiveShadow
+          position={[position.x - 4, 0.025, position.z - 4]}
+          rotation={[-PI / 2, 0, 0]}
+        >
+          <boxGeometry args={[1, 1, 0.05]} />
+          <meshStandardMaterial
+            color={isMouseOver ? '#77dd77' : 'aqua'}
+            transparent
+            opacity={isMouseOver ? 1 : 0.5}
+          />
+        </mesh>
+      )}
+    </>
   );
 };
 
