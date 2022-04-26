@@ -5,9 +5,12 @@ export const SocketContext = createContext<Socket | null>(null);
 
 export const SocketProvider = ({ children }: { children: JSX.Element }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
+  const serverAddress = process.env.REACT_APP_BACKEND_URL || '';
 
   useEffect(() => {
-    const socket = io(`http://192.168.8.21:3001`, { autoConnect: false });
+    const socket = io(serverAddress, {
+      autoConnect: false,
+    });
 
     setSocket(socket);
 
