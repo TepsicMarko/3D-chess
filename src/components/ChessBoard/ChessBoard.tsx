@@ -96,8 +96,20 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
                 console.log(x, z);
                 if (x >= 0 && x <= 7 && z >= 0 && z <= 7) {
                   if (chessBoard[z][x] === null || chessBoard[z][x]?.owner !== user)
-                    if (selectedPiece.id === 1 && !selectedPiece.moved)
-                      return [[x, z - 1]];
+                    if (selectedPiece.id === 1)
+                      if (!selectedPiece.moved)
+                        return [
+                          [x, z],
+                          [x, z - 1],
+                        ];
+                      else {
+                        let possiblePawnMoves = [];
+
+                        if (chessBoard[z][x + 1]) possiblePawnMoves.push([x + 1, z]);
+                        if (chessBoard[z][x - 1]) possiblePawnMoves.push([x - 1, z]);
+                        if (!chessBoard[z][x]) possiblePawnMoves.push([x, z]);
+                        return possiblePawnMoves;
+                      }
                     else return [[x, z]];
                 }
                 {
