@@ -2,10 +2,7 @@ import { useGLTF, useSelect } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
 import { memo, useEffect, useState } from 'react';
 import { position, SelectedPiece } from '../../types';
-
-interface models {
-  [key: number]: { name: string; size: number };
-}
+import models from '../../utils/constants/models';
 
 interface PieceProps {
   position: position;
@@ -15,15 +12,6 @@ interface PieceProps {
   color: string;
   setSelectedPiece: React.Dispatch<React.SetStateAction<SelectedPiece>>;
 }
-
-const models: models = {
-  1: { name: 'PrimaryWhitePawn007', size: 1 },
-  2: { name: 'Rook001', size: 1.5 },
-  3: { name: 'WhiteKnight001', size: 1.5 },
-  4: { name: 'PrimaryWhiteBishop001', size: 0.25 },
-  5: { name: 'WhiteKing', size: 1 },
-  6: { name: 'WhiteQueen', size: 0.25 },
-};
 
 const Piece = ({
   position,

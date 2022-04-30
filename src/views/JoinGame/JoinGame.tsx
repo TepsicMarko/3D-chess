@@ -1,6 +1,6 @@
 import '../styles/form.css';
 import React, { useContext, useEffect, useState } from 'react';
-import randomUsername from '../../helpers/randomUsername';
+import randomUsername from '../../utils/helpers/randomUsername';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SocketContext } from '../../contexts/SocketContext';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
@@ -19,7 +19,7 @@ const JoinGame = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(form);
-    socket?.connect().emit('join game', { ...form, id: gameId || form.gameId });
+    socket?.connect().emit('join game', { ...form, gameId: gameId || form.gameId });
     setUser(form.username);
   };
 
@@ -31,7 +31,7 @@ const JoinGame = () => {
   useEffect(() => {
     socket?.once('game joined', (data) => {
       console.log(data);
-      navigate('/game/' + data.id, { state: data.game });
+      navigate('/game/' + data.gameId, { state: data.game });
     });
   }, [socket]);
 

@@ -18,3 +18,8 @@ export interface chessGame {
   guest: string;
   nextTurn: string;
 }
+export interface moveInfo {
+  gameId: string;
+  selectedPiece: SelectedPiece;
+  newPosition: position;
+}

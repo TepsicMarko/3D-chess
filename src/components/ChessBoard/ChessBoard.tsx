@@ -1,18 +1,19 @@
 import { OrbitControls, Select } from '@react-three/drei';
 import { useContext, useEffect, useState } from 'react';
-import { chessBoard, chessGame, position, SelectedPiece } from '../../types';
+import { chessGame, position, SelectedPiece, moveInfo } from '../../types';
 import Piece from '../Piece';
 import Tile from '../Tile';
-import moves from '../../game-conf/moves';
+import moves from '../../utils/constants/moves';
 import { SocketContext } from '../../contexts/SocketContext';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 interface ChessBoardProps {
   newGame: chessGame;
   gameId: string;
+  openPromotionForm: (moveInfo: moveInfo) => void;
 }
 
-const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
+const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => {
   const socket = useContext(SocketContext);
   const { user } = useContext(CurrentUserContext);
   const [gameOwner] = useState(newGame.owner);
@@ -29,8 +30,8 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
   const [possibleMoves, setPossibleMoves] = useState<number[][]>([]);
 
   const movePiece = (newPosition: position) => {
-    socket?.emit('move piece', {
-      id: gameId,
+    const moveInfo: moveInfo = {
+      gameId,
       selectedPiece:
         gameOwner === user
           ? {
@@ -45,7 +46,13 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
         gameOwner === user
           ? { x: -newPosition.x + 7, z: -newPosition.z + 7 }
           : newPosition,
-    });
+    };
+
+    if (newPosition.z === 0 && selectedPiece.id === 1) {
+      openPromotionForm(moveInfo);
+    } else {
+      socket?.emit('move piece', moveInfo);
+    }
     setSelectedPiece({
       uuid: '',
       id: 0,
@@ -147,6 +154,12 @@ const ChessBoard = ({ newGame, gameId }: ChessBoardProps) => {
 
   useEffect(() => {
     socket?.on('piece moved', (game: chessGame) => {
+      setChessBoard(
+        game.owner === user ? game.state.reverse().map((el) => el.reverse()) : game.state
+      );
+      setNextTurn(game.nextTurn);
+    });
+    socket?.on('pawn promoted', (game: chessGame) => {
       setChessBoard(
         game.owner === user ? game.state.reverse().map((el) => el.reverse()) : game.state
       );

@@ -1,21 +1,19 @@
 import './NewGame.css';
 import '../styles/form.css';
-import { useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import randomUsername from '../../helpers/randomUsername';
+import randomUsername from '../../utils/helpers/randomUsername';
 import { SocketContext } from '../../contexts/SocketContext';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import DemoPiece from '../../components/DemoPiece';
 
 const NewGame = () => {
   const socket = useContext(SocketContext);
   const { setUser } = useContext(CurrentUserContext);
   const [color, setColor] = useState('white');
   const [username, setUsername] = useState(randomUsername);
-  const [rotation, setRotation] = useState(0);
   const navigate = useNavigate();
-  const { nodes }: any = useGLTF(`/models/1.gltf`);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,18 +30,10 @@ const NewGame = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setUsername(e.target.value);
 
-  useLayoutEffect(() => {
-    const interval = setInterval(() => {
-      setRotation((rotation) => rotation + 0.01);
-    }, 10);
-
-    return () => clearInterval(interval);
-  }, []);
-
   useEffect(() => {
     socket?.once('game created', (data) => {
       console.log(data);
-      navigate('/game/' + data.id, { state: data.game });
+      navigate('/game/' + data.gameId, { state: data.game });
     });
   }, [socket]);
 
@@ -67,15 +57,7 @@ const NewGame = () => {
             <Canvas shadows>
               <ambientLight intensity={0.1} />
               <spotLight castShadow color='white' position={[60, 40, 40]} angle={0.1} />
-              <meshStandardMaterial attach='material' color={'white'} />
-              <mesh
-                rotation={[0, rotation, 0]}
-                geometry={nodes.PrimaryWhitePawn007.geometry}
-                scale={0.75}
-                position={[0, -2, 0]}
-              >
-                <meshStandardMaterial attach='material' color={color} />
-              </mesh>
+              <DemoPiece pieceId={1} color={color} />
             </Canvas>
           </div>
         </div>
