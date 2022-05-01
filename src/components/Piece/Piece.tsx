@@ -1,6 +1,6 @@
 import { useGLTF, useSelect } from '@react-three/drei';
 import { ThreeEvent } from '@react-three/fiber';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { position, SelectedPiece } from '../../types';
 import models from '../../utils/constants/models';
 
@@ -22,12 +22,14 @@ const Piece = ({
   setSelectedPiece,
 }: PieceProps): any => {
   const [uuid, setUuid] = useState('');
+  const [prevPosition, setPrevPosition] = useState(position);
   const selected = useSelect();
   const { nodes }: any = useGLTF(`/models/${id}.gltf`);
+  const pieceRef = useRef<THREE.Mesh>(null);
 
   const handleClick = (e: ThreeEvent<MouseEvent>) => {
     setUuid(e.eventObject.uuid);
-    setSelectedPiece({ uuid: e.eventObject.uuid, id, position, moved });
+    setSelectedPiece({ id, position, moved });
   };
 
   const setColour = () =>
@@ -35,18 +37,43 @@ const Piece = ({
 
   useEffect(() => {
     selected[0]?.uuid !== uuid && setUuid('');
-    !selected[0] &&
-      setSelectedPiece({ uuid: '', id: 0, position: { x: -1, z: -1 }, moved });
+    !selected[0] && setSelectedPiece({ id: 0, position: { x: -1, z: -1 }, moved });
   }, [selected]);
+
+  useEffect(() => setPrevPosition(position), []);
+
+  useEffect(() => {
+    const movedX = Math.abs(position.x - prevPosition.x);
+    const movedZ = Math.abs(position.z - prevPosition.z);
+    const fps = 1000 / 60;
+    const animationDuration = 250;
+    const movementSpeedX = movedX / (animationDuration / fps);
+    const movementSpeedZ = movedZ / (animationDuration / fps);
+    const incrementOrDecrementX =
+      prevPosition.x < position.x ? movementSpeedX : -movementSpeedX;
+    const incrementOrDecrementZ =
+      prevPosition.z < position.z ? movementSpeedZ : -movementSpeedZ;
+
+    const intervalId = setInterval(async () => {
+      pieceRef.current!.position.x += incrementOrDecrementX;
+      pieceRef.current!.position.z += incrementOrDecrementZ;
+    }, fps);
+
+    setTimeout(() => {
+      clearInterval(intervalId);
+      setPrevPosition(() => position);
+    }, animationDuration);
+  }, [position]);
 
   return (
     <>
       <mesh
+        ref={pieceRef}
         receiveShadow
         castShadow
         onClick={!disabled ? handleClick : undefined}
         geometry={nodes[models[id].name].geometry}
-        position={[position.x - 4, 0, position.z - 4]}
+        position={[prevPosition.x - 4, 0, prevPosition.z - 4]}
         scale={0.15 * models[id].size}
       >
         <meshStandardMaterial attach='material' color={setColour()} />

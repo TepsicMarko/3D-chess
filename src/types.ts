@@ -1,17 +1,17 @@
 export type position = { x: number; z: number };
 export interface SelectedPiece {
-  uuid: string;
   id: number;
   position: position;
   moved: boolean;
 }
-interface rowState {
+interface pieceInfo {
+  uuid: string;
   id: number;
   owner: string;
   moved: boolean;
   color: string;
 }
-export type chessBoard = (rowState | null)[][];
+export type chessBoard = (pieceInfo | null)[][];
 export interface chessGame {
   state: chessBoard;
   owner: string;

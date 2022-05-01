@@ -1,6 +1,6 @@
 import { OrbitControls, Select } from '@react-three/drei';
 import { useContext, useEffect, useState } from 'react';
-import { chessGame, position, SelectedPiece, moveInfo } from '../../types';
+import { chessGame, chessBoard, position, SelectedPiece, moveInfo } from '../../types';
 import Piece from '../Piece';
 import Tile from '../Tile';
 import moves from '../../utils/constants/moves';
@@ -22,7 +22,6 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
     gameOwner === user ? newGame.state.reverse().map((el) => el.reverse()) : newGame.state
   );
   const [selectedPiece, setSelectedPiece] = useState<SelectedPiece>({
-    uuid: '',
     id: 0,
     position: { x: -1, z: -1 },
     moved: false,
@@ -54,11 +53,22 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
       socket?.emit('move piece', moveInfo);
     }
     setSelectedPiece({
-      uuid: '',
       id: 0,
       position: { x: -1, z: -1 },
       moved: false,
     });
+  };
+
+  const getPossiblePawnMoves = (chessBoard: chessBoard, z: number, x: number) => {
+    let possiblePawnMoves = [];
+
+    if (chessBoard[z][x + 1])
+      chessBoard[z][x + 1]?.owner !== user && possiblePawnMoves.push([x + 1, z]);
+    if (chessBoard[z][x - 1])
+      chessBoard[z][x - 1]?.owner !== user && possiblePawnMoves.push([x - 1, z]);
+    if (!chessBoard[z][x]) possiblePawnMoves.push([x, z]);
+
+    return possiblePawnMoves;
   };
 
   useEffect(() => {
@@ -104,18 +114,13 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
                 if (x >= 0 && x <= 7 && z >= 0 && z <= 7) {
                   if (chessBoard[z][x] === null || chessBoard[z][x]?.owner !== user)
                     if (selectedPiece.id === 1)
-                      if (!selectedPiece.moved)
-                        return [
-                          [x, z],
-                          [x, z - 1],
-                        ];
-                      else {
-                        let possiblePawnMoves = [];
+                      if (!selectedPiece.moved) {
+                        let possiblePawnMoves = getPossiblePawnMoves(chessBoard, z, x);
+                        if (!chessBoard[z - 1][x]) possiblePawnMoves.push([x, z - 1]);
 
-                        if (chessBoard[z][x + 1]) possiblePawnMoves.push([x + 1, z]);
-                        if (chessBoard[z][x - 1]) possiblePawnMoves.push([x - 1, z]);
-                        if (!chessBoard[z][x]) possiblePawnMoves.push([x, z]);
                         return possiblePawnMoves;
+                      } else {
+                        return getPossiblePawnMoves(chessBoard, z, x);
                       }
                     else return [[x, z]];
                 }
@@ -185,18 +190,17 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
       )}
 
       <Select>
-        {chessBoard.map((row, rowIndex) =>
-          row.map(
-            (piece, tileIndex) =>
-              piece && (
-                <Piece
-                  {...piece}
-                  disabled={piece.owner !== user || nextTurn !== user}
-                  key={`${tileIndex}-${rowIndex}`}
-                  position={{ x: tileIndex, z: rowIndex }}
-                  setSelectedPiece={setSelectedPiece}
-                />
-              )
+        {chessBoard.flatMap((row, rowIndex) =>
+          row.map((piece, tileIndex) =>
+            piece ? (
+              <Piece
+                {...piece}
+                disabled={piece.owner !== user || nextTurn !== user}
+                key={piece.uuid}
+                position={{ x: tileIndex, z: rowIndex }}
+                setSelectedPiece={setSelectedPiece}
+              />
+            ) : null
           )
         )}
       </Select>
