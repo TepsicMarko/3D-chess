@@ -26,23 +26,6 @@
   margin: 0 1rem;
 }
 
-.popup-form-container button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  border: none;
-  border-radius: 0.5rem;
-  height: 3rem;
-  margin-top: 3rem;
-  background-color: #007ea7;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  text-transform: capitalize;
-  margin: 1rem;
-}
-
 #selected-promote-option {
   border: 2px solid #007ea7;
   border-radius: 0.5rem;

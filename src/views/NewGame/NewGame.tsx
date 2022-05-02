@@ -1,7 +1,6 @@
 import './NewGame.css';
-import '../styles/form.css';
-import { Canvas } from '@react-three/fiber';
-import { useContext, useEffect, useLayoutEffect, useState } from 'react';
+import '../../styles/form.css';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import randomUsername from '../../utils/helpers/randomUsername';
 import { SocketContext } from '../../contexts/SocketContext';
@@ -19,7 +18,7 @@ const NewGame = () => {
     e.preventDefault();
     console.log(username, color);
     socket?.connect().emit('create game', { username, color });
-    setUser(username);
+    setUser({ name: username, color });
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -31,9 +30,8 @@ const NewGame = () => {
     setUsername(e.target.value);
 
   useEffect(() => {
-    socket?.once('game created', (data) => {
-      console.log(data);
-      navigate('/game/' + data.gameId, { state: data.game });
+    socket?.once('join lobby', (data) => {
+      navigate('/game/lobby/' + data.gameId, { state: true });
     });
   }, [socket]);
 
@@ -54,19 +52,17 @@ const NewGame = () => {
             ></div>
           </div>
           <div className='color-preview'>
-            <Canvas shadows>
-              <ambientLight intensity={0.1} />
-              <spotLight castShadow color='white' position={[60, 40, 40]} angle={0.1} />
-              <DemoPiece pieceId={1} color={color} />
-            </Canvas>
+            <DemoPiece pieceId={1} color={color} />
           </div>
         </div>
         <label className='username'>
           Username
           <input type='text' value={username} onChange={handleChange} />
         </label>
-        <button>create new game</button>
-        <button onClick={handleClick}>or join existing</button>
+        <button className='btn-primary'>create new game</button>
+        <button className='btn-secondary' onClick={handleClick}>
+          or join existing
+        </button>
       </form>
     </main>
   );

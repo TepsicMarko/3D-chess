@@ -1,4 +1,4 @@
-import '../styles/form.css';
+import '../../styles/form.css';
 import React, { useContext, useEffect, useState } from 'react';
 import randomUsername from '../../utils/helpers/randomUsername';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -20,7 +20,6 @@ const JoinGame = () => {
     e.preventDefault();
     console.log(form);
     socket?.connect().emit('join game', { ...form, gameId: gameId || form.gameId });
-    setUser(form.username);
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -29,9 +28,10 @@ const JoinGame = () => {
   };
 
   useEffect(() => {
-    socket?.once('game joined', (data) => {
+    socket?.once('join lobby', (data) => {
       console.log(data);
-      navigate('/game/' + data.gameId, { state: data.game });
+      setUser({ name: data.username, color: data.color });
+      navigate('/game/lobby/' + data.gameId, { state: false });
     });
   }, [socket]);
 
@@ -58,8 +58,10 @@ const JoinGame = () => {
             onChange={handleChange}
           />
         </label>
-        <button>join game</button>
-        <button onClick={handleClick}>create new game</button>
+        <button className='btn-primary'>join game</button>
+        <button className='btn-secondary' onClick={handleClick}>
+          create new game
+        </button>
       </form>
     </main>
   );

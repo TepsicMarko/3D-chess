@@ -1,4 +1,5 @@
 import { useGLTF } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
 import { useLayoutEffect, useState } from 'react';
 import models from '../../utils/constants/models';
 
@@ -21,7 +22,10 @@ const DemoPiece = ({ pieceId, color, scale }: DemoPieceProps) => {
   }, []);
 
   return (
-    <>
+    <Canvas shadows>
+      <ambientLight intensity={0.1} />
+      <spotLight castShadow color='white' position={[60, 40, 40]} angle={0.1} />
+
       <meshStandardMaterial attach='material' color={'white'} />
       <mesh
         rotation={[0, rotation, 0]}
@@ -31,7 +35,7 @@ const DemoPiece = ({ pieceId, color, scale }: DemoPieceProps) => {
       >
         <meshStandardMaterial attach='material' color={color} />
       </mesh>
-    </>
+    </Canvas>
   );
 };
 

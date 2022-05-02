@@ -1,0 +1,29 @@
+.btn-primary,
+.btn-secondary,
+.btn-tertiary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border: none;
+  border-radius: 0.5rem;
+  height: 3rem;
+  background-color: #007ea7;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.btn-secondary,
+.btn-tertiary {
+  background-color: transparent;
+  border: 1px solid #007ea7;
+  color: #007ea7;
+}
+
+.btn-tertiary {
+  border: none;
+  text-transform: none;
+  text-decoration: underline;
+}

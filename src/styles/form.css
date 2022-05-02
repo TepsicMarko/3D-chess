@@ -14,7 +14,8 @@
   color: #fff;
 }
 
-.view-form {
+.view-form,
+section {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -44,34 +45,9 @@
 }
 
 .view-form button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  border: none;
-  border-radius: 0.5rem;
-  height: 3rem;
   margin-top: 3rem;
-  background-color: #007ea7;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  text-transform: capitalize;
 }
 
 .view-form button:last-child {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  border: none;
-  border-radius: 0.5rem;
-  height: 3rem;
   margin-top: 1rem;
-  background-color: transparent;
-  border: 1px solid #007ea7;
-  color: #007ea7;
-  font-size: 1rem;
-  font-weight: bold;
-  text-transform: capitalize;
 }

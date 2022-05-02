@@ -15,11 +15,13 @@ interface ChessBoardProps {
 
 const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => {
   const socket = useContext(SocketContext);
-  const { user } = useContext(CurrentUserContext);
+  const user = useContext(CurrentUserContext);
   const [gameOwner] = useState(newGame.owner);
   const [nextTurn, setNextTurn] = useState(newGame.nextTurn);
   const [chessBoard, setChessBoard] = useState(() =>
-    gameOwner === user ? newGame.state.reverse().map((el) => el.reverse()) : newGame.state
+    gameOwner === user.name
+      ? newGame.state.reverse().map((el) => el.reverse())
+      : newGame.state
   );
   const [selectedPiece, setSelectedPiece] = useState<SelectedPiece>({
     id: 0,
@@ -32,7 +34,7 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
     const moveInfo: moveInfo = {
       gameId,
       selectedPiece:
-        gameOwner === user
+        gameOwner === user.name
           ? {
               ...selectedPiece,
               position: {
@@ -42,7 +44,7 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
             }
           : selectedPiece,
       newPosition:
-        gameOwner === user
+        gameOwner === user.name
           ? { x: -newPosition.x + 7, z: -newPosition.z + 7 }
           : newPosition,
     };
@@ -63,9 +65,9 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
     let possiblePawnMoves = [];
 
     if (chessBoard[z][x + 1])
-      chessBoard[z][x + 1]?.owner !== user && possiblePawnMoves.push([x + 1, z]);
+      chessBoard[z][x + 1]?.owner !== user.name && possiblePawnMoves.push([x + 1, z]);
     if (chessBoard[z][x - 1])
-      chessBoard[z][x - 1]?.owner !== user && possiblePawnMoves.push([x - 1, z]);
+      chessBoard[z][x - 1]?.owner !== user.name && possiblePawnMoves.push([x - 1, z]);
     if (!chessBoard[z][x]) possiblePawnMoves.push([x, z]);
 
     return possiblePawnMoves;
@@ -95,7 +97,10 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
                     selectedPiece.position.z + (forZ === '0' ? 0 : forZ === '+' ? -n : n);
 
                   if (x >= 0 && z >= 0 && x <= 7 && z <= 7) {
-                    if (chessBoard[z][x] === null || chessBoard[z][x]?.owner !== user)
+                    if (
+                      chessBoard[z][x] === null ||
+                      chessBoard[z][x]?.owner !== user.name
+                    )
                       possibleMoves.push([x, z]);
                     if (chessBoard[z][x]) break;
                   }
@@ -112,7 +117,7 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
 
                 console.log(x, z);
                 if (x >= 0 && x <= 7 && z >= 0 && z <= 7) {
-                  if (chessBoard[z][x] === null || chessBoard[z][x]?.owner !== user)
+                  if (chessBoard[z][x] === null || chessBoard[z][x]?.owner !== user.name)
                     if (selectedPiece.id === 1)
                       if (!selectedPiece.moved) {
                         let possiblePawnMoves = getPossiblePawnMoves(chessBoard, z, x);
@@ -143,7 +148,10 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
                 }
 
                 if (x >= 0 && x <= 7 && z >= 0 && z <= 7) {
-                  if (chessBoard[z][x] === null || chessBoard[z][x]?.owner !== user) {
+                  if (
+                    chessBoard[z][x] === null ||
+                    chessBoard[z][x]?.owner !== user.name
+                  ) {
                     return [x, z];
                   } else return [];
                 } else return [];
@@ -160,13 +168,17 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
   useEffect(() => {
     socket?.on('piece moved', (game: chessGame) => {
       setChessBoard(
-        game.owner === user ? game.state.reverse().map((el) => el.reverse()) : game.state
+        game.owner === user.name
+          ? game.state.reverse().map((el) => el.reverse())
+          : game.state
       );
       setNextTurn(game.nextTurn);
     });
     socket?.on('pawn promoted', (game: chessGame) => {
       setChessBoard(
-        game.owner === user ? game.state.reverse().map((el) => el.reverse()) : game.state
+        game.owner === user.name
+          ? game.state.reverse().map((el) => el.reverse())
+          : game.state
       );
       setNextTurn(game.nextTurn);
     });
@@ -195,7 +207,7 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
             piece ? (
               <Piece
                 {...piece}
-                disabled={piece.owner !== user || nextTurn !== user}
+                disabled={piece.owner !== user.name || nextTurn !== user.name}
                 key={piece.uuid}
                 position={{ x: tileIndex, z: rowIndex }}
                 setSelectedPiece={setSelectedPiece}

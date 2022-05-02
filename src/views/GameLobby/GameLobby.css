@@ -1,0 +1,82 @@
+.invite-section {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.invite-section h1 {
+  margin-bottom: 0rem;
+  flex-basis: 100%;
+  text-align: center;
+}
+
+#vs {
+  margin: 1rem;
+}
+
+.invite-section > button {
+  flex-basis: 3rem !important;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.invite-link {
+  flex-grow: 1;
+  flex-basis: 0;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0 0.5rem;
+  height: 3rem;
+  background-color: white;
+  color: black;
+  line-height: 3rem;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.players-section {
+  margin: 3rem 0 4rem;
+}
+
+.player-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-self: flex-start;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  box-sizing: border-box;
+
+  background-color: #3f4653;
+  border-radius: 0.5rem;
+  /* border: 3px solid #3f4653; */
+}
+
+.player-piece {
+  margin-right: 1rem;
+}
+
+.player-piece canvas {
+  height: 5rem;
+  width: 2.5rem;
+}
+
+.player-name {
+  font-weight: bold;
+}
+
+.controls-section button:first-child {
+  margin-bottom: 1rem;
+}
+
+.controls-section button:first-child:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.controls-section button:last-child {
+  justify-content: flex-start;
+}

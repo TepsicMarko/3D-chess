@@ -21,15 +21,11 @@ const PromotionForm = ({ visible, onClick }: PromotionFromProps) => {
             id={pieceId === selectedPiece ? 'selected-promote-option' : ''}
             onClick={() => setSelectedPiece(pieceId)}
           >
-            <Canvas>
-              <ambientLight intensity={0.1} />
-              <spotLight castShadow color='white' position={[60, 40, 40]} angle={0.1} />
-              <DemoPiece
-                pieceId={pieceId}
-                color='white'
-                scale={models[pieceId].size * 0.5}
-              />
-            </Canvas>
+            <DemoPiece
+              pieceId={pieceId}
+              color='white'
+              scale={models[pieceId].size * 0.5}
+            />
           </div>
         ))}
         <button onClick={() => onClick(selectedPiece)}>confirm</button>
