@@ -99,7 +99,7 @@ const GameLobby = () => {
               </div>
               <p className='player-name'>{user.name}</p>
             </div>
-            <h1 id='vs'>VS</h1>
+            {/* <h1 id='vs'>VS</h1> */}
             <div className={oponent ? 'player-container' : 'missing-player-container'}>
               <div className='player-piece'>
                 {oponent && (

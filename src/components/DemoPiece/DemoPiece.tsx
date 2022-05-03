@@ -1,6 +1,7 @@
 import { useGLTF } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { useLayoutEffect, useState } from 'react';
+import { useContext, useLayoutEffect, useState } from 'react';
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import models from '../../utils/constants/models';
 
 interface DemoPieceProps {
@@ -11,6 +12,7 @@ interface DemoPieceProps {
 
 const DemoPiece = ({ pieceId, color, scale }: DemoPieceProps) => {
   const [rotation, setRotation] = useState(0);
+  const user = useContext(CurrentUserContext);
   const { nodes }: any = useGLTF(`/models/${pieceId}.gltf`);
 
   useLayoutEffect(() => {
@@ -26,7 +28,7 @@ const DemoPiece = ({ pieceId, color, scale }: DemoPieceProps) => {
       <ambientLight intensity={0.1} />
       <spotLight castShadow color='white' position={[60, 40, 40]} angle={0.1} />
 
-      <meshStandardMaterial attach='material' color={'white'} />
+      <meshStandardMaterial attach='material' color={user.color} />
       <mesh
         rotation={[0, rotation, 0]}
         geometry={nodes[models[pieceId].name].geometry}
