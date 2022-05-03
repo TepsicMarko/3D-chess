@@ -66,12 +66,13 @@ const GameLobby = () => {
       lobbyInfo.owner === user.name && setOponent('');
     });
 
-    socket?.once('owner left lobby', () => {
-      setErr('The game no longer exists, because the owner left the lobby');
-    });
+    !isGameOwner &&
+      socket?.once('owner left lobby', () => {
+        setErr('The game no longer exists, because the owner left the lobby');
+      });
 
     socket?.once('game started', ({ gameId, game }) => {
-      navigate('/game/' + gameId, { state: game });
+      navigate('/game/' + gameId, { replace: true, state: game });
     });
   }, []);
 

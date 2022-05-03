@@ -1,5 +1,5 @@
 import './PromotionForm.css';
-import { Canvas } from '@react-three/fiber';
+import '../../styles/button.css';
 import models from '../../utils/constants/models';
 import DemoPiece from '../DemoPiece';
 import { useState } from 'react';
@@ -28,7 +28,12 @@ const PromotionForm = ({ visible, onClick }: PromotionFromProps) => {
             />
           </div>
         ))}
-        <button onClick={() => onClick(selectedPiece)}>confirm</button>
+        <button
+          className='btn-primary confirm-promotion'
+          onClick={() => onClick(selectedPiece)}
+        >
+          confirm
+        </button>
       </div>
     </div>
   ) : null;

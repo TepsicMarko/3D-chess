@@ -33,6 +33,10 @@ const NewGame = () => {
     socket?.once('join lobby', (data) => {
       navigate('/game/lobby/' + data.gameId, { state: true });
     });
+
+    return () => {
+      socket?.off('join lobby');
+    };
   }, [socket]);
 
   return (

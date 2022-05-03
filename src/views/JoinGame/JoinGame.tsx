@@ -4,6 +4,7 @@ import randomUsername from '../../utils/helpers/randomUsername';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SocketContext } from '../../contexts/SocketContext';
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import { toast } from 'react-toastify';
 
 const JoinGame = () => {
   const { gameId } = useParams();
@@ -11,6 +12,7 @@ const JoinGame = () => {
   const navigate = useNavigate();
   const socket = useContext(SocketContext);
   const { setUser } = useContext(CurrentUserContext);
+  const toastId = React.useRef('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,7 +26,7 @@ const JoinGame = () => {
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate('/game/new');
+    navigate('/');
   };
 
   useEffect(() => {
@@ -33,6 +35,26 @@ const JoinGame = () => {
       setUser({ name: data.username, color: data.color });
       navigate('/game/lobby/' + data.gameId, { state: false });
     });
+
+    socket?.on('join error', (err) => {
+      !toast.isActive(toastId.current) &&
+        toast.error(err.message, {
+          toastId: 'join-error',
+          position: 'top-center',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: 'dark',
+          progress: undefined,
+        });
+    });
+
+    return () => {
+      socket?.off('join lobby');
+      socket?.off('join error');
+    };
   }, [socket]);
 
   return (
