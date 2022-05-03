@@ -7,6 +7,8 @@ import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import { useContext, useEffect, useState } from 'react';
 import { SocketContext } from '../../contexts/SocketContext';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { MetroSpinner } from 'react-spinners-kit';
+import { BsQuestionLg } from 'react-icons/bs';
 
 const GameLobby = () => {
   const socket = useContext(SocketContext);
@@ -69,7 +71,7 @@ const GameLobby = () => {
       {!err ? (
         <>
           <section className='invite-section'>
-            <h1>{isGameOwner ? 'Game Link' : 'Waitin for owner to start the game...'}</h1>
+            <p>{isGameOwner ? 'Game Link' : 'Waitin for owner to start the game...'}</p>
             {isGameOwner && (
               <>
                 <p className='invite-link'>{gameLink}</p>
@@ -85,29 +87,27 @@ const GameLobby = () => {
               <div className='player-piece'>
                 <DemoPiece color={user.color} pieceId={1} />
               </div>
-              <h2 className='player-name'>{user.name}</h2>
+              <p className='player-name'>{user.name}</p>
             </div>
-
-            <h3 id='vs'>VS</h3>
-
-            {oponent ? (
-              <div className='player-container'>
-                <div className='player-piece'>
+            <h1 id='vs'>VS</h1>
+            <div className={oponent ? 'player-container' : 'missing-player-container'}>
+              <div className='player-piece'>
+                {oponent && (
                   <DemoPiece
                     color={user.color !== 'white' ? 'white' : 'rgb(50, 50, 50)'}
                     pieceId={1}
                   />
-                </div>
-                <div
-                  className='player-name'
-                  style={{ fontSize: oponent ? '1.5rem' : '' }}
-                >
-                  {oponent}
-                </div>
+                )}
               </div>
-            ) : (
-              <h2>Waitin for oponent...</h2>
-            )}
+              {oponent ? (
+                <p className='player-name'>{oponent}</p>
+              ) : (
+                <>
+                  <MetroSpinner color='white' size='100' ballSize='15' />
+                  <BsQuestionLg size='2rem' />
+                </>
+              )}
+            </div>
           </section>
 
           <section className='controls-section'>
