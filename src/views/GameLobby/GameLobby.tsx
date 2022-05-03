@@ -23,14 +23,23 @@ const GameLobby = () => {
   const [err, setErr] = useState('');
 
   const shareGameLink = async () => {
-    try {
-      await navigator.share({ url: gameLink });
-    } catch (err) {
+    if (
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+    ) {
       try {
-        await navigator.clipboard.writeText(gameLink);
+        await navigator.share({ url: gameLink });
       } catch (err) {
-        alert('your borwser does not support sharing, try manualy copying the link');
+        try {
+          await navigator.clipboard.writeText(gameLink);
+        } catch (err) {
+          if (err instanceof Error && !err.toString().includes('AbortError'))
+            alert('your borwser does not support sharing, try manualy copying the link');
+        }
       }
+    } else {
+      navigator.clipboard.writeText(gameLink);
     }
   };
 
