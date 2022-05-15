@@ -20,7 +20,7 @@ const ChessBoard = ({ newGame, gameId, openPromotionForm }: ChessBoardProps) => 
   const [nextTurn, setNextTurn] = useState(newGame.nextTurn);
   const [chessBoard, setChessBoard] = useState(() =>
     gameOwner === user.name
-      ? newGame.state.reverse().map((el) => el.reverse())
+      ? [...newGame.state].reverse().map((el) => [...el].reverse())
       : newGame.state
   );
   const [selectedPiece, setSelectedPiece] = useState<SelectedPiece>({

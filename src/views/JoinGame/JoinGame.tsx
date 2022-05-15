@@ -1,4 +1,4 @@
-import '../../styles/form.css';
+import '../../styles/view-form.css';
 import React, { useContext, useEffect, useState } from 'react';
 import randomUsername from '../../utils/helpers/randomUsername';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 import { toast } from 'react-toastify';
 
 const JoinGame = () => {
+  const isUserRejoining = window.location.href.includes('/rejoin/');
   const { gameId } = useParams();
   const [form, setForm] = useState({ username: randomUsername(), gameId: gameId || '' });
   const navigate = useNavigate();
@@ -21,7 +22,10 @@ const JoinGame = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(form);
-    socket?.connect().emit('join game', { ...form, gameId: gameId || form.gameId });
+    socket?.connect().emit(isUserRejoining ? 'rejoin game' : 'join game', {
+      ...form,
+      gameId: gameId || form.gameId,
+    });
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -33,7 +37,7 @@ const JoinGame = () => {
     socket?.once('join lobby', (data) => {
       console.log(data);
       setUser({ name: data.username, color: data.color });
-      navigate('/game/lobby/' + data.gameId, { state: false });
+      navigate('/game/rejoinlobby/' + data.gameId, { state: data.isOwner || false });
     });
 
     socket?.on('join error', (err) => {
@@ -59,7 +63,7 @@ const JoinGame = () => {
 
   return (
     <main className='view-form-container'>
-      <h1>Join Game</h1>
+      <h1>{isUserRejoining ? 'Rejoin Game' : 'Join Game'}</h1>
       <form onSubmit={handleSubmit} className='view-form'>
         <label>
           Username
@@ -80,7 +84,9 @@ const JoinGame = () => {
             onChange={handleChange}
           />
         </label>
-        <button className='btn-primary'>join game</button>
+        <button className='btn-primary'>
+          {isUserRejoining ? 'Rejoin Game' : 'Join Game'}
+        </button>
         <button className='btn-secondary' onClick={handleClick}>
           create new game
         </button>

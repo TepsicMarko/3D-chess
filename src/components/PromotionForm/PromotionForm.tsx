@@ -1,3 +1,4 @@
+import '../../styles/popup-form.css';
 import './PromotionForm.css';
 import '../../styles/button.css';
 import models from '../../utils/constants/models';

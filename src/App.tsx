@@ -8,6 +8,7 @@ import { useContextBridge } from '@react-three/drei';
 import { CurrentUserContext } from './contexts/CurrentUserContext';
 import { useContext, useState } from 'react';
 import PromotionForm from './components/PromotionForm';
+import DisconnectForm from './components/DisconnectForm';
 
 const App = () => {
   const socket = useContext(SocketContext);
@@ -56,6 +57,7 @@ const App = () => {
       </Canvas>
 
       <PromotionForm visible={isPromotionFormOpen} onClick={promotePawn} />
+      <DisconnectForm />
     </div>
   );
 };

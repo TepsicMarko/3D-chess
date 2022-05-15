@@ -1,5 +1,5 @@
 import './NewGame.css';
-import '../../styles/form.css';
+import '../../styles/view-form.css';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import randomUsername from '../../utils/helpers/randomUsername';

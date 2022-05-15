@@ -1,0 +1,88 @@
+.popup-form-container > form {
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.rejoin-link {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  color: hsla(0, 0%, 100%, 0.8);
+}
+
+.rejoin-link > div {
+  flex-basis: 100%;
+  padding-left: 0.25rem;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.rejoin-link > p {
+  display: block;
+  text-transform: none;
+  font-weight: 400;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  flex-basis: calc(100% - 3rem);
+  border-radius: 0.5rem 0 0 0.5rem;
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+  line-height: 3rem;
+}
+
+.rejoin-link > button {
+  flex-basis: 3rem;
+  min-height: 3rem;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.rejoin-link .btn-primary {
+  height: 1rem;
+}
+
+.owner-disconnect-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.owner-disconnect-status > div {
+  flex-basis: 100%;
+  margin-bottom: 1rem;
+}
+
+.game-controls {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.game-controls > button {
+  flex-basis: calc(50% - 0.5rem);
+}
+
+.resume-game:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-transform: none;
+  font-weight: 400;
+}
+
+.resume-game {
+  margin-top: 1rem;
+}
+
+.resume-game > div {
+  margin-left: 1rem;
+}

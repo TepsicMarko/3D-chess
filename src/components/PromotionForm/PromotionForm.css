@@ -1,18 +1,3 @@
-.popup-form-container {
-  position: absolute;
-  user-select: none;
-  background-color: #0b0c0f;
-  width: 25em;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: rgba(255, 255, 255, 0.95);
-  border-radius: 0.5rem;
-}
-
 .promote-options {
   display: flex;
   flex-wrap: wrap;

@@ -21,7 +21,9 @@ root.render(
             <Route path='/game/new' element={<NewGame />} />
             <Route path='/game/join' element={<JoinGame />} />
             <Route path='/game/join/:gameId' element={<JoinGame />} />
+            <Route path='/game/rejoin/:gameId' element={<JoinGame />} />
             <Route path='/game/lobby/:gameId' element={<GameLobby />} />
+            <Route path='/game/rejoinlobby/:gameId' element={<GameLobby />} />
             <Route path='/game/:gameId' element={<App />} />
             <Route path='*' element={<Navigate to='/game/new' replace />} />
           </Routes>
