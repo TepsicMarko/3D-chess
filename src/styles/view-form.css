@@ -29,6 +29,7 @@ section {
   width: 100%;
   font-weight: bold;
   margin-top: 0.5rem;
+  margin-bottom: 2.5rem;
 }
 
 .view-form label input {
@@ -38,6 +39,7 @@ section {
   padding: 0 0.5rem;
   height: 2.5rem;
   margin-top: 0.75rem;
+  border: 2px solid white;
 }
 
 .view-form label input:focus {
@@ -45,9 +47,34 @@ section {
 }
 
 .view-form button {
-  margin-top: 3rem;
+  margin-top: 1rem;
 }
 
 .view-form button:last-child {
   margin-top: 1rem;
+}
+
+.input-err {
+  margin-bottom: calc(2.5rem - 29px) !important;
+}
+
+.input-err > input {
+  color: rgb(255, 85, 85);
+  background-color: rgba(255, 85, 85, 0.15) !important;
+  border: 2px solid !important;
+}
+
+.input-err > input::placeholder {
+  color: inherit;
+}
+
+.input-err > input:focus {
+  color: rgb(255, 85, 85);
+  background-color: white;
+}
+
+.input-err-msg {
+  color: rgb(255, 85, 85);
+  margin-top: 0.5rem;
+  font-weight: normal;
 }

@@ -13,19 +13,28 @@ const JoinGame = () => {
   const navigate = useNavigate();
   const socket = useContext(SocketContext);
   const { setUser } = useContext(CurrentUserContext);
+  const [err, setErr] = useState({ username: '', gameId: '' });
   const toastId = React.useRef('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    err && setErr({ ...err, [e.target.name]: '' });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(form);
-    socket?.connect().emit(isUserRejoining ? 'rejoin game' : 'join game', {
-      ...form,
-      gameId: gameId || form.gameId,
-    });
+    if (form.username && form.gameId) {
+      socket?.connect().emit(isUserRejoining ? 'rejoin game' : 'join game', {
+        ...form,
+        gameId: gameId || form.gameId,
+      });
+    } else {
+      setErr({
+        username: form.username ? '' : 'Username is required',
+        gameId: form.gameId ? '' : 'Id is required',
+      });
+    }
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -65,7 +74,7 @@ const JoinGame = () => {
     <main className='view-form-container'>
       <h1>{isUserRejoining ? 'Rejoin Game' : 'Join Game'}</h1>
       <form onSubmit={handleSubmit} className='view-form'>
-        <label>
+        <label className={err.username ? 'input-err' : ''}>
           Username
           <input
             type='text'
@@ -73,16 +82,18 @@ const JoinGame = () => {
             value={form.username}
             onChange={handleChange}
           />
+          <span className={err.username ? 'input-err-msg' : ''}>{err.username}</span>
         </label>
-        <label>
+        <label className={err.gameId ? 'input-err' : ''}>
           Game
           <input
             type='text'
             name='gameId'
-            placeholder='Game id or url'
+            placeholder='id or url'
             value={form.gameId}
             onChange={handleChange}
           />
+          <span className={err.gameId ? 'input-err-msg' : ''}>{err.gameId}</span>
         </label>
         <button className='btn-primary'>
           {isUserRejoining ? 'Rejoin Game' : 'Join Game'}

@@ -12,13 +12,17 @@ const NewGame = () => {
   const { setUser } = useContext(CurrentUserContext);
   const [color, setColor] = useState('white');
   const [username, setUsername] = useState(randomUsername);
+  const [err, setErr] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(username, color);
-    socket?.connect().emit('create game', { username, color });
-    setUser({ name: username, color });
+    if (username) {
+      socket?.connect().emit('create game', { username, color });
+      setUser({ name: username, color });
+    } else {
+      setErr('Username is required');
+    }
   };
 
   const handleClick = (e: React.MouseEvent) => {
@@ -26,8 +30,10 @@ const NewGame = () => {
     navigate('/game/join');
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
+    err && setErr('');
+  };
 
   useEffect(() => {
     socket?.once('join lobby', (data) => {
@@ -59,9 +65,10 @@ const NewGame = () => {
             <DemoPiece pieceId={1} color={color} />
           </div>
         </div>
-        <label className='username'>
+        <label className={err ? 'input-err' : ''}>
           Username
-          <input type='text' value={username} onChange={handleChange} />
+          <input type='text' autoFocus value={username} onChange={handleChange} />
+          <span className={err ? 'input-err-msg' : ''}>{err}</span>
         </label>
         <button className='btn-primary'>create new game</button>
         <button className='btn-secondary' onClick={handleClick}>
